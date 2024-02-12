@@ -1,4 +1,8 @@
-# User: next iteration: when a piece finally lands at the bottom and locks in place, it is no longer visible, but it is still there. the next peice lands on top of it, then it too turns black or gets written over by a screen clear?
+################ User: ############################
+
+# next iteration: when a piece finally lands at the bottom and locks in place, it is no longer visible, but it is still there. the next peice lands on top of it, then it too turns black or gets written over by a screen clear?
+
+################ Iterative Coding: ################
 
 ### Iteration 6: Rendering Locked Pieces on the Board
 

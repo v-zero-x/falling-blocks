@@ -1,80 +1,121 @@
 ################ User: ############################
 
-# next iteration [which number is this?]: gradually increase the speed at which the pieces drop over time, and therefore the difficulty of the game.
+# next iteration: currently, if the player holds down the DOWN key, a piece will only move down one line. they need to keep tapping the DOWN key to move the piece all the way to the bottom. how can we fix that so if they hit the key once, it moves down one space, but if they hold the key down it repeats?
 
 ################ Iterative Coding: ################
 
-# This next iteration will be focused on gradually increasing the speed at which the pieces drop over time, effectively increasing the game's difficulty as the player progresses. This mechanic encourages players to improve their skills over time and keeps the gameplay challenging and engaging.
+# To implement a feature where holding down the DOWN key continuously moves the tetromino downwards until it locks in place, you need to adjust the event handling in your game loop to differentiate between a single key press and holding down a key. Pygame's event system can detect both scenarios, but for continuous movement, you should use the state of the keys rather than the event queue. This approach involves checking the current state of specific keys each frame, rather than relying solely on the event queue.
 
-# ### Iteration 12: Increasing Drop Speed Over Time
+# Here's how you can modify your game loop to support this feature:
 
-# To implement this feature, you can adjust the drop speed based on the player's score or the number of lines cleared. A simple approach is to decrease the `self.drop_speed` value as the player reaches certain score thresholds or clears a certain number of lines. Here's how you could modify your `run` method and other relevant parts of your `Game` class:
+# ### Updated Game Loop with Continuous Downward Movement
 
 # ```python
-# class Game:
-#     def __init__(self):
-#         # Initialization code...
-#         self.score = 0
-#         self.lines_cleared = 0  # Track the total number of lines cleared
-#         self.drop_speed = 1000  # Initial drop speed in milliseconds
-#         self.is_game_over = False
+# def run(self):
+#     while True:  # This outer loop allows the game to be restarted
+#         self.reset_game()  # Reset the game state before starting/restarting the game
+#         while not self.is_game_over:
+#             current_time = pygame.time.get_ticks()
+#             keys = pygame.key.get_pressed()  # Get the state of all keyboard keys
 
-#     # Other methods...
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     return  # Exit the entire game
+#                 if event.type == pygame.KEYDOWN:
+#                     if event.key == pygame.K_LEFT:
+#                         self.move(-1, 0)
+#                     elif event.key == pygame.K_RIGHT:
+#                         self.move(1, 0)
+#                     elif event.key == pygame.K_UP:
+#                         self.rotate_piece()
 
-#     def clear_lines(self):
-#         new_board = [row for row in self.board if not all(color != (0,0,0) for color in row)]
-#         lines_cleared_now = len(self.board) - len(new_board)
-        
-#         if lines_cleared_now > 0:
-#             self.lines_cleared += lines_cleared_now  # Update total lines cleared
-#             self.score += self.calculate_score(lines_cleared_now)
-#             print(f"Score: {self.score}")  # Debugging or display in-game
-#             self.adjust_drop_speed()  # Adjust drop speed based on lines cleared
-        
-#         for _ in range(lines_cleared_now):
-#             new_board.insert(0, [(0,0,0) for _ in range(SCREEN_WIDTH // BLOCK_SIZE)])
-#         self.board = new_board
+#             # Continuous downward movement when the DOWN key is held
+#             if keys[pygame.K_DOWN]:
+#                 self.move(0, 1)
 
-#     def adjust_drop_speed(self):
-#         # Example: Decrease drop speed every 10 lines cleared
-#         if self.lines_cleared % 10 == 0:
-#             self.drop_speed = max(100, self.drop_speed - 50)  # Prevent drop speed from becoming too fast
+#             # Adjusting the drop speed for continuous movement
+#             # This checks if the DOWN key is pressed and adjusts the drop speed accordingly
+#             drop_speed_adjusted = self.drop_speed
+#             if keys[pygame.K_DOWN]:
+#                 drop_speed_adjusted = max(50, drop_speed_adjusted // 10)  # Adjust drop speed for faster fall
 
-#     def run(self):
-#         while True:  # Outer loop for restarting the game
-#             self.reset_game()  # Reset the game state
-#             while not self.is_game_over:
-#                 current_time = pygame.time.get_ticks()
-#                 keys = pygame.key.get_pressed()
-
-#                 # Event handling...
-
-#                 if keys[pygame.K_DOWN]:
+#             if current_time - self.last_drop_time > drop_speed_adjusted:
+#                 if not self.check_collision(self.current_piece.shape, (self.current_piece.x, self.current_piece.y + 1)):
 #                     self.move(0, 1)
+#                 else:
+#                     self.lock_piece()
+#                     # Check for game over condition right after locking a piece
+#                     if self.check_collision(self.current_piece.shape, (self.current_piece.x, self.current_piece.y)):
+#                         self.is_game_over = True
+#                 self.last_drop_time = current_time
 
-#                 drop_speed_adjusted = self.drop_speed
-#                 if keys[pygame.K_DOWN]:
-#                     drop_speed_adjusted = max(50, drop_speed_adjusted // 10)  # Faster fall on DOWN key
+#             self.screen.fill((0, 0, 0))
+#             self.draw_grid()
+#             self.draw_piece(self.current_piece)
+#             self.draw_score()
+#             pygame.display.flip()
+#             self.clock.tick(60)
 
-#                 if current_time - self.last_drop_time > drop_speed_adjusted:
-#                     # Movement and locking logic...
-#                     self.last_drop_time = current_time
-
-#                 # Drawing the game state...
-
-#             # Game over logic...
-
-#         # After game over logic...
+#             if self.is_game_over:
+#                 self.game_over_screen()  # Display game over screen
 # ```
 
-# ### Key Features of This Iteration:
+# ### Key Changes and Features:
 
-# - **Lines Cleared Tracking**: Introduce a variable (`self.lines_cleared`) to keep track of the total number of lines the player has cleared throughout the game.
-# - **Adjusting Drop Speed**: Implement an `adjust_drop_speed` method that decreases the `self.drop_speed` as the player clears more lines. This method is called every time lines are cleared.
-# - **Difficulty Progression**: By reducing the drop speed (making pieces fall faster) at certain milestones (e.g., every 10 lines cleared), the game becomes progressively more challenging.
+# - **Key State Checking**: By calling `pygame.key.get_pressed()`, you obtain the state of all keys. This allows you to check if the DOWN key is currently pressed down on each frame.
+# - **Continuous Movement**: If the DOWN key is pressed, `self.move(0, 1)` is called outside the event loop, enabling continuous movement downwards as long as the key is held.
+# - **Drop Speed Adjustment**: When the DOWN key is held, the drop speed is significantly reduced to allow the piece to move down faster. The `drop_speed_adjusted` variable allows for a quicker drop but still provides a small delay between movements, making the downward movement visually smoother and more controllable.
 
-# This approach allows the game's difficulty to scale with the player's skill level, providing a balanced and engaging gameplay experience. Feel free to adjust the scaling of the drop speed and the milestones based on testing and player feedback to find the right level of challenge.
+# This solution allows for both single key presses for precise movement and holding down the key for rapid descent, improving the gameplay experience by giving the player more control over the tetrominoes.
 
+################ User: ############################
+
+# thank you. next iteration: this is a small one. Only after restarting the game, command-q or clicking on the window close button no longer quits the game. please output the entire 'run(self)' block to make sure I get it right, thank you.
+
+################ Iterative Coding: ################
+
+# The issue you're experiencing with quitting the game not working after a restart likely stems from the way the game loop and event handling are structured, especially with how the game restart is implemented. When the game is restarted, the event loop must continue to correctly handle quit events.
+
+# To ensure that quit events (like Command-Q or clicking the window's close button) are correctly handled at all times, including after a game restart, you should structure your game loop to consistently check for quit events, even when outside the main gameplay loop. This can be achieved by placing event checks in any waiting loops and ensuring that the quit event leads to a break out of all loops and subsequently exits the program.
+
+# Here's how you can adjust your game loop to ensure quitting works correctly after restarting:
+
+# ### Revised Approach for Handling Quit Events
+
+# ```python
+# def run(self):
+#     running = True  # Controls the outermost loop
+#     while running:  # This outer loop allows the game to be restarted
+#         self.reset_game()  # Reset the game state before starting/restarting the game
+#         while not self.is_game_over:
+#             current_time = pygame.time.get_ticks()
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     running = False  # Ensures we break out of the outer loop as well
+#                     break  # Exit the inner loop
+#                 # Handle other events (including KEYDOWN) here
+                
+#             if not running:  # Check if we need to exit the outer loop
+#                 break
+
+#             # Game loop contents (movement, drawing, etc.) go here
+
+#             if self.is_game_over:
+#                 self.game_over_screen()  # Display game over screen and wait for input
+                
+#         # You can handle any cleanup or preparation for a new game here if necessary
+
+#     # If the loop exits, quit Pygame and the program
+#     pygame.quit()
+# ```
+
+# ### Key Adjustments:
+
+# - **Unified Quit Handling**: By using a `running` variable to control the outer loop and checking for the `pygame.QUIT` event, you ensure that quit events are respected no matter where in the game loop they occur.
+# - **Immediate Loop Exit**: When a quit event is detected, the code sets `running` to `False` and breaks out of the current loop. It then checks `running` after exiting the inner loop, allowing for a clean exit out of the outer loop as well.
+# - **Pygame Quit**: Calling `pygame.quit()` after the loops ensures that Pygame shuts down properly when the game is closed.
+
+# This structure ensures that quit events are handled consistently throughout the game, including after restarting, making the game more robust and user-friendly by allowing players to exit at any time.
 
 import pygame
 import random
@@ -136,9 +177,7 @@ class Game:
         self.drop_speed = 1000  # Milliseconds
         self.last_drop_time = pygame.time.get_ticks()
         self.score = 0
-        self.lines_cleared = 0  # Track the total number of lines cleared
-        self.drop_speed = 1000  # Initial drop speed in milliseconds
-        self.is_game_over = False
+        self.is_game_over = False  # Indicates if the game is in a "game over" state
 
     def new_piece(self):
         piece = Tetromino(random.choice(TETROMINOES))
@@ -250,28 +289,8 @@ class Game:
         self.score = 0
         # You may want to reset other game state variables here as well
 
-    def clear_lines(self):
-        new_board = [row for row in self.board if not all(color != (0,0,0) for color in row)]
-        lines_cleared_now = len(self.board) - len(new_board)
-        
-        if lines_cleared_now > 0:
-            self.lines_cleared += lines_cleared_now  # Update total lines cleared
-            self.score += self.calculate_score(lines_cleared_now)
-            print(f"Score: {self.score}")  # Debugging or display in-game
-            self.adjust_drop_speed()  # Adjust drop speed based on lines cleared
-        
-        for _ in range(lines_cleared_now):
-            new_board.insert(0, [(0,0,0) for _ in range(SCREEN_WIDTH // BLOCK_SIZE)])
-        self.board = new_board
-
-    def adjust_drop_speed(self):
-        # Example: Decrease drop speed every 10 lines cleared
-        if self.lines_cleared % 2 == 0:
-            self.drop_speed = max(100, self.drop_speed - 50)  # Prevent drop speed from becoming too fast
-            print("speed", self.drop_speed)
-
     def run(self):
-        while True:  # Outer loop for restarting the game
+        while True:  # This outer loop allows for restarting the game
             self.reset_game()  # Reset the game state before starting/restarting the game
             while not self.is_game_over:
                 current_time = pygame.time.get_ticks()
@@ -306,15 +325,12 @@ class Game:
                         # Check for game over condition right after locking a piece
                         if self.check_collision(self.current_piece.shape, (self.current_piece.x, self.current_piece.y)):
                             self.is_game_over = True
-                        else:
-                            # Line clearing and possibly adjusting drop speed due to game progression
-                            self.clear_lines()
                     self.last_drop_time = current_time
 
                 self.screen.fill((0, 0, 0))
                 self.draw_grid()
                 self.draw_piece(self.current_piece)
-                self.draw_score()  # Make sure this method is defined to draw the score
+                self.draw_score()
                 pygame.display.flip()
                 self.clock.tick(60)
 
@@ -331,6 +347,3 @@ class Game:
 if __name__ == "__main__":
     game = Game()
     game.run()
-
-
-

@@ -1,8 +1,10 @@
 # https://chat.openai.com/g/g-ZfQ1k76Cv-iterative-coding
 
-# User: write an object-oriented, realistic Tetris game clone.
+################ User: ############################
 
-# Iterative Coding:
+# write an object-oriented, realistic Tetris game clone.
+
+################ Iterative Coding: ################
 
 # To start creating an object-oriented Tetris game clone in Python, we'll begin with the basic structure. This includes setting up the game board, pieces (tetrominoes), and the game logic to control piece movement, rotation, and line clearing. Here's how the first iteration could look:
 
@@ -239,11 +241,11 @@
 
 # This iteration adds critical gameplay mechanics, including piece movement, rotation, locking, and the foundation for drawing the game state. The next steps will refine these elements and add the remaining core features of Tetris, such as line clearing and game over conditions.
 
-# User:
+################ User: ############################
 
 # please generaate the entire file with all of the code and I will test this iteration.
 
-# Iterative Coding:
+################ Iterative Coding: ################
 
 # Sure, I'll provide you with the complete Python file that includes all the changes and additions we've made so far. This version includes basic game mechanics like piece movement, rotation, locking pieces in place, and the framework for drawing the game state. Please note that this code will need further development for features like line clearing and game over detection.
 

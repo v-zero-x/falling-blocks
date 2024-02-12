@@ -1,8 +1,8 @@
-# User:
+################ User: ############################
 
 # next iteration: the collision check on the right side of the board works, but tetronimos can move past the left side of the board. maybe check tetronimo width and update collision checks?
 
-# Iterative Coding:
+################ User: ############################
 
 # ### Iteration 5: Improving Collision Checks for Left Boundary
 

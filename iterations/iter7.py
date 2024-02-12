@@ -1,4 +1,6 @@
-# User: next iteration: let's discuss piece rotation. when I test the game, this is the first piece that appears:
+################ User: ############################
+
+# next iteration: let's discuss piece rotation. when I test the game, this is the first piece that appears:
 #     [[4, 0, 0],
 #      [4, 4, 4]],
 
@@ -17,7 +19,7 @@
 #         if self.check_collision(self.current_piece.shape, (self.current_piece.x, self.current_piece.y)):
 #             self.current_piece.rotate()  # Rotate back if there's a collision
 
-# Iterative Coding:
+################ Iterative Coding: ################
 
 # The issue with the rotation not appearing to change the piece's shape is due to the `rotate` method in the `Tetromino` class not actually modifying the shape of the tetromino. It only increments the `rotation` attribute without changing the tetromino's structure. For tetromino rotation, you generally need to transform the shape matrix.
 

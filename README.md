@@ -1,4 +1,4 @@
-# Falling Blocks
+# Falling Blocks - A Human-AI Collaboration
 
 <figure>
   <img src="falling_blocks.png" alt="Falling Blocks">
@@ -8,7 +8,9 @@
 
 This project is an re-imagination of the classic Tetris® game, developed in Python using the Pygame library. It features core gameplay mechanics such as tetromino falling, rotation, line clearing, and a scoring system. The game ends when the tetrominos stack up to the top of the playing field, with an option to restart once the game is over.
 
-This project was built using the ["Iterative Coding" GPT](https://chat.openai.com/g/g-ZfQ1k76Cv-iterative-coding) developed by vzerox.com to test and demonstrate ChatGPT's ability to generate simple, complete applications and scripts by using an iterative process. This README was also AI-generated with only minor edits made to the initial document.
+This project was built using the ["Iterative Coding" GPT](https://chat.openai.com/g/g-ZfQ1k76Cv-iterative-coding) developed by vzerox.com to test and demonstrate ChatGPT's ability to generate simple, complete applications and scripts by using an iterative process.
+
+The initial README was also AI-generated. See [iterations/create-readme.md](iterations/create-readme.md).
 
 ## Project Description
 
@@ -49,6 +51,56 @@ The goal is to clear as many lines as possible by completing horizontal lines of
 ## Development Process
 
 The game was developed through a series of iterations, each focusing on adding or refining features. The development was a collaborative effort between a human and an AI, leveraging the AI's ability to generate code and solve programming challenges.
+
+### Tips and Observations
+- **ChatGPT does all the coding:** I tried to let ChatGPT do all of the coding, debugging, feature additions, even if they were obvious fixes. This helped ChatGPT maintain the context of the code for future iterations.
+- **Maintaining Context** So far it has not lost context across all iterations, even afger refreshing the browser window, switching away to another chat session and returning later, etc.
+- **Debug Assistance:** For debugging, as needed, I add print statements and report the debug output (see [iter7.py](iterations/iter7.py)):
+    ```
+    next iteration: let's discuss piece rotation. when I test the game, this is the first piece that appears:
+        [[4, 0, 0],
+        [4, 4, 4]],
+
+    when i press the UP arrow. this is the before and after rotation of the piece:
+    before: [[4, 0, 0], [4, 4, 4]]
+    after: [[4, 0, 0], [4, 4, 4]]
+
+    the piece does not appear to rotate.
+
+    here is the code that rotates the piece:
+        def rotate_piece(self):
+            print(self.current_piece.shape)
+            self.current_piece.rotate()
+            print(self.current_piece.shape)
+
+            if self.check_collision(self.current_piece.shape, (self.current_piece.x, self.current_piece.y)):
+                self.current_piece.rotate()  # Rotate back if there's a collision
+
+    ```
+- In one of the iterations, the fix was so tiny i didn't want to bother with another iteration for it so I made the fix and reported back using the same format that ChatGPT was using for code updates (see [iter10.py](iterations/iter10.py)):
+  ```
+  User:
+
+  the Game class was missing the 'score' attribute so I added it:
+
+  class Game:
+      def __init__(self):
+          pygame.init()
+          self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+          pygame.display.set_caption('Tetris Clone')
+          self.clock = pygame.time.Clock()
+          self.board = [[(0,0,0) for _ in range(SCREEN_WIDTH // BLOCK_SIZE)] for _ in range(SCREEN_HEIGHT // BLOCK_SIZE)]
+          self.current_piece = self.new_piece()
+          self.game_over = False
+          self.drop_speed = 1000  # Milliseconds
+          self.last_drop_time = pygame.time.get_ticks()
+          self.score = 0 # added score and tested the Scoring System. it works!
+
+          # Other methods remain unchanged...
+  ```
+- I spend no time reviewing the code. I just drop the new code into a new file, run it, and I'm continually surprised when it just works. I will likely stop development when the project gets to a point that ChatGPT can't fix a bug, or add a new feature on it's own.
+- **Request entire file or Integration:** If integrating a code update is non-obvious, like an easy copy/paste, I don't waste any time thinking about it, I just ask ChatGPT to generate the entire code block. I suspect this also helps ChatGPT maintain context over time. [See initial_iterations.py Line 246](iterations/initial_iterations.py#246) and [See iter9.py Line 81](iterations/iter9.py#81)
+- I had never used Pygame before. I could not not have developed this game on my own in such a short period of time (a few hours end-to-end).
 
 ### Iterative Development Overview:
 

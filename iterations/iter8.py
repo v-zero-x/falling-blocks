@@ -1,8 +1,8 @@
-# User:
+################ User: ############################
 
 # the game iterations are going well. the pieces now fall, rotate, remain on the board once locked, and respect boundaries correctly.
 
-# Iterative Coding:
+################ Iterative Coding: ################
 
 # I'm glad to hear the game iterations are going well! With the core mechanics like piece falling, rotation, boundary respect, and locking in place now working correctly, you have a solid foundation for a Tetris game. 
 
@@ -34,11 +34,12 @@
 
 # If you need further assistance implementing any of these features or have more questions as you continue developing your Tetris clone, feel free to ask!
 
-# User: 
+################ User: ############################
+
 
 # next iteration: Line Clearing. Note that each complete row should be removed and remaining rows should be dropped to fill the space of the cleared rows.
 
-# Iterative Coding:
+################ Iterative Coding: ################
 
 # ### Iteration 8: Implementing Line Clearing
 

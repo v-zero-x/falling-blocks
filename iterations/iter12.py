@@ -266,9 +266,8 @@ class Game:
 
     def adjust_drop_speed(self):
         # Example: Decrease drop speed every 10 lines cleared
-        if self.lines_cleared % 2 == 0:
+        if self.lines_cleared % 10 == 0:
             self.drop_speed = max(100, self.drop_speed - 50)  # Prevent drop speed from becoming too fast
-            print("speed", self.drop_speed)
 
     def run(self):
         while True:  # Outer loop for restarting the game

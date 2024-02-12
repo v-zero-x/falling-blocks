@@ -2,7 +2,7 @@
 
 # next iteration: Game Over Screen that displays "GAME OVER" with an option to restart the game.
 
-# ################ Iterative Coding: ################
+################ Iterative Coding: ################
 
 # ### Iteration 11: Implementing a Game Over Screen with Restart Option
 
@@ -87,7 +87,7 @@
 
 # I was able to integrate all of the new code except the changes to 'def run(self)'. Please help me with that integration.
 
-# ################ Iterative Coding: ################
+################ Iterative Coding: ################
 
 # Certainly! Let's focus on integrating the changes into the `run` method of your `Game` class to ensure it handles the game loop, game over state, and restart functionality smoothly. The goal is to maintain the game loop when the game is active and display the game over screen with an option to restart when the game ends.
 
